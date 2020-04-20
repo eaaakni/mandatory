@@ -8,8 +8,6 @@ export default class Question extends Component {
        this.props.voteAnswer(this.props.id, aid)
    }
 
-
-
     render(){
     const id = this.props.id;
     const question = this.props.getQuestion(id);

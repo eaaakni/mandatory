@@ -22,7 +22,7 @@ export default class AskQuestion extends Component {
   render(){
     return (
         <>
-        <h1>Ask Question</h1>
+        <h1>Ask a Question</h1>
           <input name="title" aria-label="title" type="text" placeholder="Write a title"
                  onChange={event => this.onChange(event)}/>
           <input name="question" aria-label="question" type="text" placeholder="Write a Question"
