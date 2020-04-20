@@ -36,16 +36,15 @@ class Db {
     }
 
     async postQuestion(newQuestion) {
-        // TODO: Error handling
         let question = new this.questionModel(newQuestion);
         return await question.save();
     }
 
-    async postAnswer(questionId, answer) {
-        // TODO: Error handling
-        const question = await this.getQuestion(questionId);
-        //question.hobbies.push(answer);
-        return await question.save();
+    async postAnswer(id, answer) {
+            const question = await this.getQuestion(id);
+            const newAnswer = {text: answer, votes: 0};
+            question.answers.push(newAnswer);
+            return await question.save();
     }
 
     async voteAnswer(id, aid) {

@@ -5,7 +5,7 @@ export default class AskQuestion extends Component {
     super(props);
     this.state = {
       title: "",
-      desc: "",
+      question: "",
       comments: []
     }
   }
@@ -16,7 +16,7 @@ export default class AskQuestion extends Component {
     })
   }
   onSubmit() {
-    this.props.postQuestion(this.state.title, this.state.desc, this.state.comments)
+    this.props.postQuestion(this.state.title, this.state.question, this.state.comments)
   }
 
   render(){
@@ -25,7 +25,7 @@ export default class AskQuestion extends Component {
         <h1>Ask Question</h1>
           <input name="title" aria-label="title" type="text" placeholder="Write a title"
                  onChange={event => this.onChange(event)}/>
-          <input name="desc" aria-label="desc" type="text" placeholder="Write a Question"
+          <input name="question" aria-label="question" type="text" placeholder="Write a Question"
                  onChange={event => this.onChange(event)}/>
           <button onClick={_ => this.onSubmit()}>Ask Question</button>
 

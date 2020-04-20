@@ -5,7 +5,7 @@ export default class PostAnswer extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            input: ""
+            answer: ""
         }
     }
 
@@ -16,7 +16,7 @@ export default class PostAnswer extends Component {
     }
 
     onSubmit() {
-        this.props.postAnswer(this.props.id, this.state.input);
+        this.props.postAnswer(this.props.id, this.state.answer);
     }
 
 
@@ -24,7 +24,7 @@ export default class PostAnswer extends Component {
     return (
         <>
             <h3>Answers</h3>
-            <input autoComplete="off" name="input" onChange={event => this.onChange(event)} type="text"/>
+            <input autoComplete="off" name="answer" onChange={event => this.onChange(event)} type="text"/>
             <button onClick={_ => this.onSubmit()}>Answer</button>
         </>
     );

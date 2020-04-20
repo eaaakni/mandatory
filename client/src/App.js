@@ -35,9 +35,9 @@ export default class App extends Component {
         return this.state.questions.find(q => q._id === id);
     }
 
-    async postQuestion(title, desc){
-        console.log("postQuestion", title, desc)
-        const url = `${this.API_URL}/api/questions`;
+    async postQuestion(title, question){
+        console.log("postQuestion", title, question, "from App")
+        const url = `${this.API_URL}/questions`;
 
         const response = await fetch(url, {
             headers: {
@@ -45,8 +45,8 @@ export default class App extends Component {
             },
             method: 'POST',
             body: JSON.stringify({
-                text: title,
-                desc: desc
+                title: title,
+                question: question
             })
         });
         const data = await response.json();
@@ -55,9 +55,9 @@ export default class App extends Component {
     }
 
 
-    async postAnswer(id, text){
-        console.log("postAnswer", id, text)
-        const url = `${this.API_URL}/api/question/${id}/answers`;
+    async postAnswer(id, answer){
+        console.log("postAnswer", id, answer)
+        const url = `${this.API_URL}/question/${id}/answers`;
 
         const response = await fetch(url, {
             headers: {
@@ -65,7 +65,7 @@ export default class App extends Component {
             },
             method: 'POST',
             body: JSON.stringify({
-                text: text
+                answer: answer
             })
         });
         const data = await response.json();
