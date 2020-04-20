@@ -6,6 +6,10 @@ import Question from "./Question";
 
 
 export default class App extends Component {
+    // API url from the file '.env' OR the file '.env.development'.
+    // The first file is only used in production.
+    API_URL = process.env.REACT_APP_API_URL;
+
     constructor(props) {
         super(props);
         this.state = {
@@ -13,11 +17,13 @@ export default class App extends Component {
         }
     }
     componentDidMount() {
-        this.getData();
+        //this.getData();
+        this.getQuestions().then(() => console.log("Questions gotten!"));
     }
 
-    async getData() {
-        const url = "http://localhost:8080/api/questions";
+    async getQuestions() {
+        const url = `${this.API_URL}/questions`; // URL of the API.
+            //"http://localhost:8080/api/questions";
         const response = await fetch(url);
         const data = await response.json();
         this.setState({
@@ -26,15 +32,12 @@ export default class App extends Component {
     }
 
     getQuestion(id){
-        const question = this.state.questions.find(q => q.id === parseInt(id));
-        return question;
+        return this.state.questions.find(q => q._id === id);
     }
-
-
 
     async postQuestion(title, desc){
         console.log("postQuestion", title, desc)
-        const url = `http://localhost:8080/api/questions`;
+        const url = `${this.API_URL}/api/questions`;
 
         const response = await fetch(url, {
             headers: {
@@ -48,13 +51,13 @@ export default class App extends Component {
         });
         const data = await response.json();
         console.log("Printing the response:", data);
-        this.getData();
+        this.getQuestions();
     }
 
 
     async postAnswer(id, text){
         console.log("postAnswer", id, text)
-        const url = `http://localhost:8080/api/question/${id}/answers`;
+        const url = `${this.API_URL}/api/question/${id}/answers`;
 
         const response = await fetch(url, {
             headers: {
@@ -67,12 +70,12 @@ export default class App extends Component {
         });
         const data = await response.json();
         console.log("Printing the response:", data);
-        this.getData();
+        this.getQuestions();
     }
 
    async voteAnswer(id, aid) {
         console.log("voteAnswer", id, aid);
-        const url = `http://localhost:8080/api/question/${id}/answer/${aid}`;
+        const url = `${this.API_URL}/question/${id}/answer/${aid}`;
 
        const response = await fetch(url, {
            headers: {
@@ -82,7 +85,7 @@ export default class App extends Component {
        });
        const data = await response.json();
        console.log("Printing the response:", data);
-       this.getData();
+       this.getQuestions();
     }
 
     render(){

@@ -35,16 +35,24 @@ class Db {
         }
     }
 
-    async createQuestion(newQuestion) {
+    async postQuestion(newQuestion) {
         // TODO: Error handling
         let question = new this.questionModel(newQuestion);
         return await question.save();
     }
 
-    async addAnswer(questionId, answer) {
+    async postAnswer(questionId, answer) {
         // TODO: Error handling
         const question = await this.getQuestion(questionId);
-        question.hobbies.push(answer);
+        //question.hobbies.push(answer);
+        return await question.save();
+    }
+
+    async voteAnswer(id, aid) {
+        const question = await this.getQuestion(id);
+        console.log(question);
+        const answer = await question.answers.id(aid);
+        answer.votes++;
         return await question.save();
     }
 
@@ -54,35 +62,48 @@ class Db {
      * @returns {Promise} Resolves when everything has been saved.
      */
     async bootstrap(count = 10) {
-        const hobbies = ['sleeping', 'purring', 'eating', 'people watching'];
-        function getRandomInt(min, max) {
-            return Math.floor(Math.random() * (max - min + 1) + min);
-        }
-
-        function getRandomName() {
-            return ['Garfield', 'Tom', 'Felix', 'Snowball'][getRandomInt(0,3)]
-        }
-
-        function getRandomHobbies() {
-            const shuffled = hobbies.sort(() => 0.5 - Math.random());
-            return shuffled.slice(0, getRandomInt(1,shuffled.length));
-        }
-
         let l = (await this.getQuestions()).length;
         console.log("Question collection size:", l);
 
         if (l === 0) {
-            let promises = [];
+            const q1 = {
 
-            for (let i = 0; i < count; i++) {
-                let question = new this.questionModel({
-                    name: getRandomName(),
-                    hobbies: getRandomHobbies()
-                });
-                promises.push(question.save());
-            }
+                title: "What’s your favorite genre of book or movie?",
+                question:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+                answers: [{
+                    text: "Spirited Away",
+                    votes: 0}]
+            };
+            const q2 = {
 
-            return Promise.all(promises);
+                title: "Do you think that humans as a species have gotten better through the generations or worse? Why?",
+                question:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+                answers: [{
+                    text: "Both",
+                    votes: 0}]
+            };
+            const q3 = {
+                 title: "What have you recently become obsessed with?",
+                question:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+                answers: [
+                    {   text: "Crochet",
+                        votes: 0},
+                    {
+                        text: "Calligraphy",
+                        votes: 0}]
+            };
+            const q4 =  {
+                title: "How has the education you received changed your life?",
+                question:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+                answers: [{
+                    text: "Getting smarter",
+                    votes: 0}]
+            };
+
+            await this.postQuestion(q1);
+            await this.postQuestion(q2);
+            await this.postQuestion(q3);
+            await this.postQuestion(q4);
         }
     }
 }

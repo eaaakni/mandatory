@@ -22,7 +22,7 @@ export default class Question extends Component {
         content = question.question;
         answers = question.answers.map(a =>
             <li>{a.text}
-                <button onClick={_ => this.onSubmit(a.id)}>Like: {a.votes}</button>
+                <button onClick={_ => this.onSubmit(a._id)}>Like: {a.votes}</button>
             </li>);
     }
 

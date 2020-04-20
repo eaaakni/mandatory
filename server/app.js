@@ -18,27 +18,17 @@ app.use(express.static('../client/build')); // Needed for serving production bui
 /**** Database ****/
 const questionDB = require('./qa_db')(mongoose);
 
-/**** Some test data ***
-const questions = [
-    {
-        id: 0,
-        title: "What’s your favorite genre of book or movie?",
-        question:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-        answers: []},
-    {id: 1, title: "Do you think that humans as a species have gotten better through the generations or worse? Why?", question:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", answers: []},
-    {id: 2, title: "What have you recently become obsessed with?", question:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", answers: [
-            {id: 1, text: "You how state classes but not in Functions", votes: 0},
-            {id: 2, text: "See answer 1", votes: 0},]},
-    {id: 3, title: "How has the education you received changed your life?", question:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", answers: []},
-];
- */
 /**** Routes ****/
-
 // Return all questions in data
-app.get('/api/questions', (req, res) => res.json(questions));
-app.get('/api/question/:id', (req, res) => {
-    const id = parseInt(req.params.id);
-    const question = questions.find(q => q.id === id);
+app.get('/api/questions', async (req, res) => {
+    const questions = await questionDB.getQuestions();
+    res.json(questions);
+});
+
+app.get('/api/question/:id', async (req, res) => {
+    let id = req.params.id;
+   //const question = questions.find(q => q.id === id);
+    const question = await questionDB.getQuestion(id);
     res.json(question);
 });
 
@@ -47,22 +37,28 @@ app.get('/api/question/:id/answers', (req, res) => {
     const question = questions.find(q => q.id === id);
     res.json(question.answers);
 });
-
+/*
 app.get('/api/question/:id/answer/:aid', (req, res) => {
     const id = parseInt(req.params.id);
     const aid = parseInt(req.params.aid);
     const question = questions.find(q => q.id === id);
     const answer = question.answers.find(a => a.id === aid);
     res.json(answer);
-});
+});*/
 
 // Ask Question
-app.post('/api/questions/', (req, res) => {
-    const text = req.body.text;
+app.post('/api/questions/', async (req, res) => {
+    let question = {
+        title: req.body.title,
+        desc: req.body.desc
+    }
+    const newQuestion = await questionDB(question);
+    res.json(newQuestion);
+    /*const text = req.body.text;
     const desc = req.body.desc;
     questions.push({id: Math.floor(Math.random() * 101), title: text, question: desc, answers: []});
     console.log(text);
-    res.json({msg: "Question added", question: text});
+    res.json({msg: "Question added", question: text});*/
 });
 // PostAnswer
 app.post('/api/question/:id/answers', (req, res) => {
@@ -78,15 +74,34 @@ app.post('/api/question/:id/answers', (req, res) => {
 });
 
 //put
-app.put('/api/question/:id/answer/:aid', (req, res) => {
-    const id = parseInt(req.params.id);
-    const aid = parseInt(req.params.aid);
-    const question = questions.find(q => q.id === id);
-    const answer = question.answers.find(a => a.id === aid);
-    answer.votes++;
-    console.log(answer);
-    res.json({msg: "Answer updated", answer: answer});
+app.put('/api/question/:id/answer/:aid', async (req, res) => {
+    const id = req.params.id;
+    const aid = req.params.aid;
+    //const question = questions.find(q => q.id === id);
+    //const answer = question.answers.find(a => a.id === aid);
+    //answer.votes++;
+
+    await questionDB.voteAnswer(id, aid);
+
+    //console.log(answer);
+    res.json({msg: "Answer updated"});
 });
 
-/**** Start! ****/
-app.listen(port, () => console.log(`${appName} API running on port ${port}!`));
+/**** Start! ***
+app.listen(port, () => console.log(`${appName} API running on port ${port}!`));*/
+const url = process.env.MONGO_URL || 'mongodb://localhost/qa_db';
+mongoose.connect(url, {useNewUrlParser: true, useUnifiedTopology: true})
+    .then(async () => {
+        await questionDB.bootstrap(); // Fill in test data if needed.
+        await app.listen(port); // Start the API
+        console.log(`Question API running on port ${port}!`);
+    })
+    .catch(error => console.error(error));
+
+
+
+/**** Some test data ***
+ const questions = [
+,
+ ];
+ */
